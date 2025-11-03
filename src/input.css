@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom tokens via CSS vars are optional; we rely mostly on Tailwind utilities */
+
+/* Reusable utility for the gradient badge */
+.badge-soft {
+  @apply inline-block rounded-full border px-4 py-2 text-sm font-medium;
+  background-image: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.12));
+  border-color: rgba(255,255,255,.25);
+}
+
+html {
+  scroll-behavior: smooth;
+}
