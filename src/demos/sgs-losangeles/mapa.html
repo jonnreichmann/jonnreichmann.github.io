@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Los Ángeles - Chile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .form-container {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 15px;
+        }
+        button {
+            width: 100%;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        #map {
+            width: 100%;
+            height: 700px;
+            border-top: 3px solid #667eea;
+            position: relative;
+        }
+        .layer-control {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            min-width: 200px;
+        }
+        .layer-control h4 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 1.1em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+        .layer-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            cursor: pointer;
+        }
+        .layer-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        .layer-item label {
+            margin: 0;
+            font-size: 0.95em;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        .legend {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-top: 2px solid #e0e0e0;
+        }
+        .legend h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.3em;
+        }
+        .legend-section {
+            margin-bottom: 20px;
+        }
+        .legend-section h4 {
+            margin-bottom: 10px;
+            color: #555;
+            font-size: 1.1em;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .legend-color {
+            width: 30px;
+            height: 20px;
+            margin-right: 10px;
+            border-radius: 4px;
+            border: 2px solid #333;
+        }
+        .message {
+            padding: 15px;
+            margin: 20px 30px;
+            border-radius: 10px;
+            display: none;
+        }
+        .message.error {
+            background: #fee;
+            color: #c33;
+            border: 2px solid #fcc;
+        }
+        .message.success {
+            background: #efe;
+            color: #3c3;
+            border: 2px solid #cfc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗺️ Mapa de Los Ángeles</h1>
+            <p>Busca cualquier dirección en la comuna - Región del Biobío, Chile</p>
+        </div>
+        
+        <div class="form-container">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="calle">Calle:</label>
+                    <input type="text" id="calle" placeholder="Ej: Avenida Sor Vicenta, Lautaro, Valdivia">
+                </div>
+                <div class="form-group">
+                    <label for="numero">Número:</label>
+                    <input type="text" id="numero" placeholder="Ej: 123">
+                </div>
+            </div>
+            <button onclick="buscarDireccion()">🔍 Ver en el Mapa</button>
+        </div>
+
+        <div id="message" class="message"></div>
+        
+        <div id="map">
+            <div class="layer-control">
+                <h4>📂 Capas (Layers)</h4>
+                <div class="layer-item">
+                    <input type="checkbox" id="layer-cuadrante1" checked onchange="toggleLayer('cuadrante1')">
+                    <label for="layer-cuadrante1">Cuadrante 1 (NE)</label>
+                </div>
+                <div class="layer-item">
+                    <input type="checkbox" id="layer-cuadrante2" checked onchange="toggleLayer('cuadrante2')">
+                    <label for="layer-cuadrante2">Cuadrante 2 (NO)</label>
+                </div>
+                <div class="layer-item">
+                    <input type="checkbox" id="layer-cuadrante3" checked onchange="toggleLayer('cuadrante3')">
+                    <label for="layer-cuadrante3">Cuadrante 3 (SE)</label>
+                </div>
+                <div class="layer-item">
+                    <input type="checkbox" id="layer-cuadrante4" checked onchange="toggleLayer('cuadrante4')">
+                    <label for="layer-cuadrante4">Cuadrante 4 (SO)</label>
+                </div>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid #ddd;">
+                <div class="layer-item">
+                    <input type="checkbox" id="layer-limites" checked onchange="toggleLayer('limites')">
+                    <label for="layer-limites">Límites Comunales</label>
+                </div>
+                <div class="layer-item">
+                    <input type="checkbox" id="layer-ejemplos" checked onchange="toggleLayer('ejemplos')">
+                    <label for="layer-ejemplos">Marcadores Ejemplo</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <h3>📍 Leyenda del Mapa</h3>
+            
+            <div class="legend-section">
+                <h4>Áreas y Límites:</h4>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: rgba(255,0,0,0.1); border-color: red;"></div>
+                    <span><strong>Límites Comunales de Los Ángeles</strong></span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: rgba(0,123,255,0.4); border-color: #007bff;"></div>
+                    <span>Cuadrantes del Centro (4 sectores)</span>
+                </div>
+            </div>
+
+            <div class="legend-section">
+                <h4>Iconos de Marcadores:</h4>
+                <div class="legend-item">
+                    <span style="font-size: 1.5em; margin-right: 10px;">📍</span>
+                    <span><strong>Pin morado:</strong> Dirección buscada</span>
+                </div>
+                <div class="legend-item">
+                    <span style="font-size: 1.5em; margin-right: 10px;">⭐</span>
+                    <span><strong>Estrella:</strong> Centro/Plaza de Armas</span>
+                </div>
+                <div class="legend-item">
+                    <span style="font-size: 1.5em; margin-right: 10px;">🏠</span>
+                    <span><strong>Casa roja:</strong> Ejemplo residencial</span>
+                </div>
+                <div class="legend-item">
+                    <span style="font-size: 1.5em; margin-right: 10px;">🏢</span>
+                    <span><strong>Edificio verde:</strong> Ejemplo comercial</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script>
+        // Inicializar el mapa centrado en Los Ángeles
+        const map = L.map('map').setView([-37.4686, -72.3548], 12);
+
+        // Agregar capa de OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Límites reales aproximados de la comuna de Los Ángeles, Chile
+        const limitesLosAngeles = [
+            [-37.2800, -72.6500],
+            [-37.2800, -72.1500],
+            [-37.3200, -72.0800],
+            [-37.4000, -72.0500],
+            [-37.5000, -72.0800],
+            [-37.6500, -72.1000],
+            [-37.6600, -72.2000],
+            [-37.6300, -72.3500],
+            [-37.5800, -72.4800],
+            [-37.5000, -72.6000],
+            [-37.4200, -72.6500],
+            [-37.3500, -72.6200],
+            [-37.2800, -72.6500]
+        ];
+
+        // Objeto para almacenar todas las capas
+        const layers = {};
+
+        // Dibujar límites de la comuna en ROJO
+        layers.limites = L.polygon(limitesLosAngeles, {
+            color: 'red',
+            weight: 3,
+            fillColor: 'red',
+            fillOpacity: 0.05,
+            dashArray: '5, 5'
+        }).addTo(map);
+        
+        layers.limites.bindPopup('<b>Comuna de Los Ángeles</b><br>Región del Biobío, Chile');
+
+        // Centro exacto de Los Ángeles
+        const centro = [-37.4686, -72.3548];
+        
+        // Tamaño de los cuadrantes
+        const tamanoSector = 0.018;
+        
+        // Estilo para los cuadrantes
+        const estiloCuadrante = {
+            color: '#0066cc',
+            weight: 2,
+            fillColor: '#0066cc',
+            fillOpacity: 0.25
+        };
+
+        // CUADRANTE 1 - Noreste
+        const cuadrante1Coords = [
+            [centro[0] - tamanoSector, centro[1]],
+            [centro[0] - tamanoSector, centro[1] + tamanoSector],
+            [centro[0], centro[1] + tamanoSector],
+            [centro[0], centro[1]]
+        ];
+        layers.cuadrante1 = L.polygon(cuadrante1Coords, estiloCuadrante).addTo(map);
+        layers.cuadrante1.bindPopup('<b>Cuadrante 1</b><br>Noreste (NE)');
+
+        // CUADRANTE 2 - Noroeste
+        const cuadrante2Coords = [
+            [centro[0] - tamanoSector, centro[1] - tamanoSector],
+            [centro[0] - tamanoSector, centro[1]],
+            [centro[0], centro[1]],
+            [centro[0], centro[1] - tamanoSector]
+        ];
+        layers.cuadrante2 = L.polygon(cuadrante2Coords, estiloCuadrante).addTo(map);
+        layers.cuadrante2.bindPopup('<b>Cuadrante 2</b><br>Noroeste (NO)');
+
+        // CUADRANTE 3 - Sureste
+        const cuadrante3Coords = [
+            [centro[0], centro[1]],
+            [centro[0], centro[1] + tamanoSector],
+            [centro[0] + tamanoSector, centro[1] + tamanoSector],
+            [centro[0] + tamanoSector, centro[1]]
+        ];
+        layers.cuadrante3 = L.polygon(cuadrante3Coords, estiloCuadrante).addTo(map);
+        layers.cuadrante3.bindPopup('<b>Cuadrante 3</b><br>Sureste (SE)');
+
+        // CUADRANTE 4 - Suroeste
+        const cuadrante4Coords = [
+            [centro[0], centro[1] - tamanoSector],
+            [centro[0], centro[1]],
+            [centro[0] + tamanoSector, centro[1]],
+            [centro[0] + tamanoSector, centro[1] - tamanoSector]
+        ];
+        layers.cuadrante4 = L.polygon(cuadrante4Coords, estiloCuadrante).addTo(map);
+        layers.cuadrante4.bindPopup('<b>Cuadrante 4</b><br>Suroeste (SO)');
+
+        // Iconos personalizados
+        const iconoCasa = L.icon({
+            iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            `),
+            iconSize: [40, 40],
+            iconAnchor: [20, 40],
+            popupAnchor: [0, -40]
+        });
+
+        const iconoUbicacion = L.icon({
+            iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="50" viewBox="0 0 24 24" fill="#667eea" stroke="white" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3" fill="white"></circle>
+                </svg>
+            `),
+            iconSize: [40, 50],
+            iconAnchor: [20, 50],
+            popupAnchor: [0, -50]
+        });
+
+        const iconoEdificio = L.icon({
+            iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="#28a745" stroke="white" stroke-width="2">
+                    <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                    <line x1="8" y1="6" x2="8" y2="6"></line>
+                    <line x1="12" y1="6" x2="12" y2="6"></line>
+                    <line x1="16" y1="6" x2="16" y2="6"></line>
+                    <line x1="8" y1="10" x2="8" y2="10"></line>
+                    <line x1="12" y1="10" x2="12" y2="10"></line>
+                    <line x1="16" y1="10" x2="16" y2="10"></line>
+                    <line x1="8" y1="14" x2="8" y2="14"></line>
+                    <line x1="12" y1="14" x2="12" y2="14"></line>
+                    <line x1="16" y1="14" x2="16" y2="14"></line>
+                </svg>
+            `),
+            iconSize: [40, 40],
+            iconAnchor: [20, 40],
+            popupAnchor: [0, -40]
+        });
+
+        const iconoEstrella = L.icon({
+            iconUrl: 'data:image/svg+xml;base64,' + btoa(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="#ffc107" stroke="#333" stroke-width="1">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+            `),
+            iconSize: [40, 40],
+            iconAnchor: [20, 20],
+            popupAnchor: [0, -20]
+        });
+
+        // Grupo de capas para ejemplos
+        layers.ejemplos = L.layerGroup([
+            L.marker(centro, {icon: iconoEstrella})
+                .bindPopup('<b>⭐ Centro de Los Ángeles</b><br>Plaza de Armas (aprox.)'),
+            L.marker([-37.4700, -72.3600], {icon: iconoCasa})
+                .bindPopup('<b>🏠 Ejemplo: Casa</b><br>Marcador con icono de casa'),
+            L.marker([-37.4650, -72.3500], {icon: iconoEdificio})
+                .bindPopup('<b>🏢 Ejemplo: Edificio</b><br>Marcador con icono de edificio')
+        ]).addTo(map);
+
+        // Variable para el marcador de búsqueda
+        let marcadorActual = null;
+
+        // Función para mostrar/ocultar capas
+        function toggleLayer(layerName) {
+            const checkbox = document.getElementById('layer-' + layerName);
+            if (checkbox.checked) {
+                map.addLayer(layers[layerName]);
+            } else {
+                map.removeLayer(layers[layerName]);
+            }
+        }
+
+        function mostrarMensaje(texto, tipo) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.textContent = texto;
+            msgDiv.className = 'message ' + tipo;
+            msgDiv.style.display = 'block';
+            setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        async function buscarDireccion() {
+            const calle = document.getElementById('calle').value.trim();
+            const numero = document.getElementById('numero').value.trim();
+
+            if (!calle) {
+                mostrarMensaje('⚠️ Por favor ingresa una calle', 'error');
+                return;
+            }
+
+            const direccion = `${calle} ${numero}, Los Ángeles, Biobío, Chile`;
+            mostrarMensaje('🔍 Buscando dirección...', 'success');
+
+            try {
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(direccion)}&limit=1&countrycodes=cl`
+                );
+                const data = await response.json();
+
+                if (data.length > 0) {
+                    const lat = parseFloat(data[0].lat);
+                    const lon = parseFloat(data[0].lon);
+
+                    if (marcadorActual) {
+                        map.removeLayer(marcadorActual);
+                    }
+
+                    marcadorActual = L.marker([lat, lon], {icon: iconoUbicacion}).addTo(map)
+                        .bindPopup(`
+                            <div style="text-align: center;">
+                                <b>📍 ${direccion}</b><br>
+                                <small>Latitud: ${lat.toFixed(6)}<br>
+                                Longitud: ${lon.toFixed(6)}</small>
+                            </div>
+                        `)
+                        .openPopup();
+
+                    map.setView([lat, lon], 16);
+                    
+                    mostrarMensaje('✅ ¡Dirección encontrada exitosamente!', 'success');
+                } else {
+                    mostrarMensaje('❌ No se encontró la dirección. Intenta con otra búsqueda.', 'error');
+                }
+            } catch (error) {
+                mostrarMensaje('⚠️ Error al buscar la dirección. Intenta nuevamente.', 'error');
+                console.error('Error:', error);
+            }
+        }
+
+        // Permitir buscar con Enter
+        document.getElementById('numero').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') buscarDireccion();
+        });
+        document.getElementById('calle').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') buscarDireccion();
+        });
+    </script>
+</body>
+</html>
