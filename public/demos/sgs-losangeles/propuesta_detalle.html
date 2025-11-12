@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuesta - Sistema Seguridad Pública Los Ángeles</title>
+    <style>
+        @media print {
+            body { margin: 0; }
+            .page-break { page-break-before: always; }
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20mm;
+            background: #fff;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #2c3e50;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            color: #7f8c8d;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .budget-box {
+            background: #ecf0f1;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 22px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        
+        h3 {
+            color: #34495e;
+            font-size: 18px;
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+        
+        h4 {
+            color: #555;
+            font-size: 16px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .module-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .module-box h4 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .phase-card {
+            background: #fff;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .phase-card h4 {
+            color: #3498db;
+            margin-top: 0;
+        }
+        
+        .payment-highlight {
+            background: #d5f4e6;
+            border-left: 4px solid #27ae60;
+            padding: 10px 15px;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .tech-item {
+            background: #e8f4f8;
+            padding: 12px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .actor-card {
+            background: #f0f8ff;
+            border: 1px solid #b0d4f1;
+            border-radius: 5px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+        
+        .actor-card strong {
+            color: #2c3e50;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        table th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        
+        table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Sistema "Seguridad Pública Los Ángeles"</h1>
+        <div class="subtitle">Propuesta Técnica y Comercial</div>
+        <div class="subtitle">MVP Operacional</div>
+    </div>
+
+    <div class="budget-box">
+        💰 Presupuesto Total: $4.000.000 CLP (Bruto)
+    </div>
+
+    <h2>1. Objetivo General</h2>
+    <p>Desarrollar un sistema web de gestión de denuncias y despacho de personal de seguridad municipal que permita:</p>
+    <ul>
+        <li>Registrar denuncias con ubicación georreferenciada y fotografías</li>
+        <li>Visualizar y gestionar denuncias activas en tiempo real (mapa + listados)</li>
+        <li>Asignar guardias/móviles a denuncias (despacho)</li>
+        <li>Controlar el ciclo de vida de la denuncia (activa → en atención → cerrada)</li>
+        <li>Administrar usuarios y parámetros básicos (roles, tipos de denuncias, prioridades)</li>
+    </ul>
+    
+    <p>Todo esto utilizando tecnologías web modernas: <strong>.NET Core + Angular + Leaflet (OpenStreetMap)</strong>, con un diseño simple y funcional adaptado a la realidad de la Municipalidad de Los Ángeles.</p>
+
+    <div class="page-break"></div>
+
+    <h2>2. Alcance Funcional (MVP)</h2>
+
+    <div class="module-box">
+        <h3>2.1. Módulo SGS Denuncias</h3>
+        <p><strong>Actores:</strong> Operador (central de seguridad), Administrador</p>
+        
+        <h4>Ingreso de Denuncia</h4>
+        <ul>
+            <li>Selección de tipo de denuncia (catálogo municipal)</li>
+            <li>Selección de prioridad (Alta / Media / Baja)</li>
+            <li>Descripción libre de los hechos</li>
+            <li>Ubicación exacta: calle, número, referencia y marcación en mapa</li>
+            <li>Datos del denunciante: nombre, apellido, teléfono</li>
+            <li>Fotografías: 1 foto principal obligatoria + hasta 2 fotos adicionales</li>
+        </ul>
+
+        <h4>Estados de Denuncia</h4>
+        <ul>
+            <li><strong>Activa:</strong> Requiere atención o está en proceso</li>
+            <li><strong>Cerrada:</strong> Fue atendida y finalizada</li>
+        </ul>
+
+        <h4>Listado de Denuncias Activas</h4>
+        <ul>
+            <li>Tabla con: ID, fecha, tipo, prioridad, dirección, estado, asignación</li>
+            <li>Filtros por: rango de fechas, tipo de denuncia, prioridad, estado</li>
+            <li>Visualización en mapa con marcadores y popups informativos</li>
+        </ul>
+
+        <h4>Mis Denuncias (Operador)</h4>
+        <ul>
+            <li>Vista personalizada de denuncias ingresadas por el operador</li>
+            <li>Estado actual y fechas de creación/cierre</li>
+        </ul>
+
+        <h4>Detalle de Denuncia</h4>
+        <ul>
+            <li>Ficha completa con datos, mapa, fotos</li>
+            <li>Historial básico de cambios de estado y asignaciones</li>
+        </ul>
+    </div>
+
+    <div class="module-box">
+        <h3>2.2. Módulo SGS Dispatcher</h3>
+        <p><strong>Actores:</strong> Operador (central), Personal de Seguridad en Terreno</p>
+        
+        <h4>Gestión de Personal en Turno</h4>
+        <ul>
+            <li>Registro de personal: nombre, tipo (Infantería, Motocicleta, Automóvil), móvil/patente, teléfono/radial</li>
+            <li>Estados: Disponible / No disponible</li>
+            <li>Vista "En Turno" con listado del personal disponible</li>
+        </ul>
+
+        <h4>Asignación de Denuncias (Operador)</h4>
+        <ul>
+            <li><strong>Vista "Sin Despacho":</strong> Denuncias activas sin personal asignado</li>
+            <li>Asignar denuncia a uno o más miembros del personal</li>
+            <li><strong>Vista "En Ejecución":</strong> Denuncias con personal asignado y estado de atención</li>
+        </ul>
+
+        <h4>Mis Asignaciones (Personal de Seguridad)</h4>
+        <ul>
+            <li>Lista de denuncias asignadas con datos clave</li>
+            <li>Actualización de estados de atención:
+                <ul>
+                    <li>Recibida → En ruta → En lugar → Cerrada</li>
+                </ul>
+            </li>
+            <li>Al cerrar todas las asignaciones, la denuncia pasa a "Cerrada"</li>
+        </ul>
+    </div>
+
+    <div class="module-box">
+        <h3>2.3. Módulo SGS Administrador</h3>
+        <p><strong>Actores:</strong> Administrador del sistema</p>
+        
+        <h4>Dashboard Básico</h4>
+        <ul>
+            <li>Total de denuncias activas</li>
+            <li>Total de denuncias cerradas (día/semana)</li>
+            <li>Top 5 tipos de denuncia más frecuentes</li>
+            <li>Mapa con denuncias activas (colores según prioridad)</li>
+        </ul>
+
+        <h4>Gestión de Usuarios</h4>
+        <ul>
+            <li>Crear usuarios con roles: Administrador, Operador, Personal de seguridad</li>
+            <li>Activar/desactivar usuarios</li>
+        </ul>
+
+        <h4>Búsqueda Básica de Denuncias</h4>
+        <ul>
+            <li>Filtros por fecha, tipo y estado</li>
+            <li>Listado con opción de ver detalle</li>
+        </ul>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h2>3. Funcionalidades Transversales</h2>
+    <ul>
+        <li><strong>Autenticación y Autorización:</strong> Login con usuario + contraseña, tokens JWT, redirecciones según rol</li>
+        <li><strong>Mapas y GPS:</strong> Leaflet con OpenStreetMap, captura de ubicación del navegador</li>
+        <li><strong>Auditoría / Bitácora:</strong> Registro de quién crea, asigna, atiende, cierra y modifica estados, con fecha/hora, usuario y, cuando aplique, coordenadas asociadas.</li>
+    </ul>
+
+    <h3>Georreferenciación y uso en dispositivos móviles</h3>
+    <p>El sistema está diseñado para que tanto operadores como personal en terreno puedan trabajar con georreferenciación de forma simple, sin requerir aplicaciones móviles nativas ni seguimiento avanzado en tiempo real.</p>
+    <ul>
+        <li>Al crear una denuncia, el operador podrá marcar la ubicación en el mapa y, opcionalmente, utilizar la ubicación del navegador si se encuentra en terreno.</li>
+        <li>Cuando el personal de seguridad registra o cierra una atención en terreno, el sistema tomará la ubicación actual del dispositivo (vía navegador) y la almacenará junto con la información ingresada.</li>
+        <li>La ubicación se obtiene mediante la API de geolocalización del navegador, siempre previa autorización del usuario.</li>
+        <li>En esta etapa (MVP Operacional) no se implementa seguimiento continuo en tiempo real ni geofencing; solo se registran coordenadas en momentos clave (creación de denuncia, registro/cierre de atención).</li>
+        <li>La interfaz se desarrollará de forma responsiva, permitiendo que el personal en terreno acceda desde navegadores móviles (por ejemplo, Chrome en Android) sin necesidad de instalar una app.</li>
+        <li>Una eventual evolución a PWA (aplicación web instalable) y/o funcionalidades offline podrá evaluarse como una fase posterior con un nuevo presupuesto.</li>
+    </ul>
+
+    <h2>4. Fuera de Alcance</h2>
+    <div class="warning-box">
+        <strong>⚠️ No incluido en este presupuesto:</strong>
+        <ul>
+            <li>Dashboards estadísticos avanzados (series históricas largas, comparativos)</li>
+            <li>Integraciones con otros sistemas municipales</li>
+            <li>Aplicaciones móviles nativas (Android/iOS)</li>
+            <li>Soporte 24/7 o mesa de ayuda permanente</li>
+            <li>Geofencing, seguimiento en tiempo real continuo o mapas de calor</li>
+            <li>Reportes PDF complejos o plantillas configurables</li>
+            <li>Multi-tenant (múltiples municipalidades)</li>
+        </ul>
+        <p><em>Cualquier funcionalidad adicional puede evaluarse para una Fase 2 con nuevo presupuesto.</em></p>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h2>5. Arquitectura Técnica</h2>
+
+    <div class="tech-stack">
+        <div class="tech-item">
+            <strong>Frontend</strong><br>
+            Angular (LTS)<br>
+            SPA Responsiva<br>
+            Leaflet
+        </div>
+        <div class="tech-item">
+            <strong>Backend</strong><br>
+            .NET Core / .NET 8<br>
+            API REST<br>
+            JWT
+        </div>
+        <div class="tech-item">
+            <strong>Base de Datos</strong><br>
+            PostgreSQL<br>
+            o SQL Server Express
+        </div>
+    </div>
+
+    <h3>Tablas Principales</h3>
+    <ul>
+        <li>Usuarios y Roles</li>
+        <li>Denuncias</li>
+        <li>Tipos de Denuncia</li>
+        <li>Personal en Turno</li>
+        <li>Asignaciones</li>
+        <li>Fotos de Denuncia</li>
+        <li>Log de Auditoría</li>
+    </ul>
+
+    <h3>Infraestructura (No incluida en presupuesto)</h3>
+    <p><strong>Nota:</strong> El cliente debe proveer infraestructura de alojamiento (hosting o VPS) y el dominio.</p>
+    <ul>
+        <li>VPS sugerido: 2 vCPU, 4 GB RAM, ~80 GB SSD, Linux con Docker, SSL y backups.</li>
+        <li>Alternativa hosting tradicional: IIS + .NET + SQL Server Express (sin Docker).</li>
+        <li>Certificado SSL (Let's Encrypt) y copias de seguridad periódicas.</li>
+    </ul>
+    <p>Se realizará despliegue con Docker (API + Frontend) en caso de VPS.</p>
+
+    <div class="page-break"></div>
+
+    <h2>6. Plan de Trabajo y Plazos</h2>
+
+    <h3>Calendario General</h3>
+    <table>
+        <tr>
+            <th>Hito</th>
+            <th>Fecha Objetivo</th>
+        </tr>
+        <tr>
+            <td>MVP Funcional Operativo (Demo)</td>
+            <td>31 de Diciembre</td>
+        </tr>
+        <tr>
+            <td>Versión Final Documentada</td>
+            <td>31 de Enero</td>
+        </tr>
+    </table>
+
+    <h3>Fases de Desarrollo</h3>
+
+	<div class="phase-card">
+	  <h4>Fase 1: Análisis Detallado y Diseño (1–2 semanas)</h4>
+	  <ul>
+		<li>Revisión y afinamiento de requerimientos con la Municipalidad</li>
+		<li>Definición del modelo de datos definitivo</li>
+		<li>Diseño de wireframes y pantallas base</li>
+	  </ul>
+	  <p><strong>HITO 1:</strong> Documento de alcance validado + prototipo funcional de pantallas</p>
+	  <div class="payment-highlight">
+		💳 <strong>Pago 1 – 10%</strong> a la aprobación del diseño y alcance (inicio formal del proyecto)
+	  </div>
+	</div>
+
+	<div class="phase-card">
+	  <h4>Fase 2: Desarrollo módulo Denuncias (3–4 semanas)</h4>
+	  <ul>
+		<li>Implementación API REST de denuncias (.NET)</li>
+		<li>Formulario de ingreso y validaciones en Angular</li>
+		<li>Listado, detalle y visualización en mapa (Leaflet)</li>
+		<li>Gestión de estados Activa / Cerrada y carga de fotos</li>
+	  </ul>
+	  <p><strong>HITO 2 (Fin de Noviembre):</strong> Prototipo funcional del flujo principal de denuncias</p>
+	  <div class="payment-highlight">
+		💳 <strong>Pago 2 – 30%</strong> contra entrega del MVP inicial con datos de prueba
+	  </div>
+	</div>
+
+	<div class="phase-card">
+	  <h4>Fase 3: Desarrollo módulo Dispatcher (3–4 semanas)</h4>
+	  <ul>
+		<li>Módulo de gestión de personal en turno</li>
+		<li>Asignación de denuncias a móviles o patrullas</li>
+		<li>Vista “Mis asignaciones” para personal en terreno</li>
+		<li>Actualización de estados: Recibida → En ruta → En lugar → Cerrada</li>
+	  </ul>
+	  <p><strong>HITO 3 (Fin de Diciembre):</strong> Flujo operativo completo funcionando end-to-end</p>
+	  <div class="payment-highlight">
+		💳 <strong>Pago 3 – 30%</strong> contra entrega del MVP operativo y demo con datos reales
+	  </div>
+	</div>
+
+	<div class="phase-card">
+	  <h4>Fase 4: Módulo Administrador y Dashboard (2–3 semanas)</h4>
+	  <ul>
+		<li>Gestión de usuarios y roles</li>
+		<li>Dashboard con indicadores básicos (denuncias activas, cerradas, top tipos)</li>
+		<li>Búsqueda general de denuncias</li>
+	  </ul>
+	  <p><strong>HITO 4 (Enero):</strong> Versión final lista para despliegue</p>
+	</div>
+
+	<div class="phase-card">
+	  <h4>Fase 5: Despliegue, pruebas y documentación (2 semanas)</h4>
+	  <ul>
+		<li>Instalación y configuración en servidor del cliente (hosting o VPS)</li>
+		<li>Pruebas finales con usuarios reales</li>
+		<li>Corrección de incidencias menores</li>
+		<li>Entrega de manual de usuario</li>
+	  </ul>
+	  <div class="payment-highlight">
+		💳 <strong>Pago 4 – 30%</strong> contra entrega final, despliegue y documentación
+	  </div>
+	</div>
+
+
+    <div class="page-break"></div>
+
+    <h2>7. Actores del Sistema</h2>
+
+    <div class="actor-card">
+        <strong>👤 Operador de Central de Seguridad</strong>
+        <p><em>Funcionario municipal que recibe denuncias y las ingresa al sistema</em></p>
+        <p><strong>Acciones:</strong> Crear denuncias, ver denuncias activas, asignar personal, hacer seguimiento</p>
+    </div>
+
+    <div class="actor-card">
+        <strong>🚓 Personal de Seguridad en Terreno</strong>
+        <p><em>Guardia, patrulla, móvil municipal</em></p>
+        <p><strong>Acciones:</strong> Ver "Mis asignaciones", consultar detalles con mapa, cambiar estado de atención</p>
+    </div>
+
+    <div class="actor-card">
+        <strong>⚙️ Administrador del Sistema</strong>
+        <p><em>Encargado de seguridad o informática</em></p>
+        <p><strong>Acciones:</strong> Gestionar usuarios y roles, consultar dashboards, revisar denuncias históricas</p>
+    </div>
+
+    <div class="actor-card">
+        <strong>📞 Denunciante (Ciudadano)</strong>
+        <p><em>Habitante que reporta incidentes</em></p>
+        <p><strong>Nota:</strong> No tiene acceso directo al sistema en esta versión. La denuncia la ingresa el operador.</p>
+    </div>
+
+    <h2>8. Flujo Principal del Sistema</h2>
+    
+    <div style="background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <svg viewBox="0 0 800 600" style="width: 100%; height: auto; max-height: 500px;">
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#2c3e50" />
+                </marker>
+                <filter id="shadow">
+                    <feDropShadow dx="2" dy="2" stdDeviation="2" flood-opacity="0.3"/>
+                </filter>
+            </defs>
+            
+            <g>
+                <rect x="50" y="30" width="150" height="60" rx="10" fill="#e74c3c" stroke="#c0392b" stroke-width="2" filter="url(#shadow)"/>
+                <text x="125" y="55" text-anchor="middle" fill="white" font-size="14" font-weight="bold">📞 Denunciante</text>
+                <text x="125" y="75" text-anchor="middle" fill="white" font-size="12">Llama/Reporta</text>
+            </g>
+            <line x1="125" y1="90" x2="125" y2="130" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)"/>
+            
+            <g>
+                <rect x="50" y="130" width="150" height="80" rx="10" fill="#3498db" stroke="#2980b9" stroke-width="2" filter="url(#shadow)"/>
+                <text x="125" y="155" text-anchor="middle" fill="white" font-size="14" font-weight="bold">👤 Operador</text>
+                <text x="125" y="175" text-anchor="middle" fill="white" font-size="11">Ingresa datos:</text>
+                <text x="125" y="190" text-anchor="middle" fill="white" font-size="10">tipo, prioridad,</text>
+                <text x="125" y="202" text-anchor="middle" fill="white" font-size="10">ubicación, fotos</text>
+            </g>
+            <line x1="200" y1="170" x2="280" y2="170" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)"/>
+            
+            <g>
+                <rect x="280" y="140" width="160" height="60" rx="10" fill="#9b59b6" stroke="#8e44ad" stroke-width="2" filter="url(#shadow)"/>
+                <text x="360" y="165" text-anchor="middle" fill="white" font-size="14" font-weight="bold">📋 SGS Denuncias</text>
+                <text x="360" y="185" text-anchor="middle" fill="white" font-size="11">Estado: ACTIVA</text>
+            </g>
+            <line x1="360" y1="200" x2="360" y2="240" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)"/>
+            
+            <g>
+                <rect x="280" y="240" width="160" height="70" rx="10" fill="#f39c12" stroke="#e67e22" stroke-width="2" filter="url(#shadow)"/>
+                <text x="360" y="265" text-anchor="middle" fill="white" font-size="14" font-weight="bold">🎯 SGS Dispatcher</text>
+                <text x="360" y="285" text-anchor="middle" fill="white" font-size="11">SIN DESPACHO</text>
+                <text x="360" y="300" text-anchor="middle" fill="white" font-size="10">Operador asigna personal</text>
+            </g>
+            <line x1="440" y1="275" x2="520" y2="275" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)"/>
+            
+            <g>
+                <rect x="520" y="240" width="160" height="70" rx="10" fill="#16a085" stroke="#138d75" stroke-width="2" filter="url(#shadow)"/>
+                <text x="600" y="265" text-anchor="middle" fill="white" font-size="14" font-weight="bold">🚓 Personal</text>
+                <text x="600" y="285" text-anchor="middle" fill="white" font-size="11">Ve "Mis asignaciones"</text>
+                <text x="600" y="300" text-anchor="middle" fill="white" font-size="10">Consulta mapa</text>
+            </g>
+            <line x1="600" y1="310" x2="600" y2="350" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)"/>
+            
+            <g>
+                <rect x="520" y="350" width="160" height="90" rx="10" fill="#27ae60" stroke="#229954" stroke-width="2" filter="url(#shadow)"/>
+                <text x="600" y="375" text-anchor="middle" fill="white" font-size="14" font-weight="bold">📍 Atención</text>
+                <text x="600" y="395" text-anchor="middle" fill="white" font-size="11">Actualiza estados:</text>
+                <text x="600" y="412" text-anchor="middle" fill="white" font-size="10">Recibida → En ruta</text>
+                <text x="600" y="427" text-anchor="middle" fill="white" font-size="10">→ En lugar → Cerrada</text>
+            </g>
+            <path d="M 520 395 Q 450 395 450 230 Q 450 200 440 200" stroke="#2c3e50" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+            <text x="470" y="310" fill="#2c3e50" font-size="10">Actualiza</text>
+            
+            <g>
+                <rect x="280" y="470" width="160" height="60" rx="10" fill="#95a5a6" stroke="#7f8c8d" stroke-width="2" filter="url(#shadow)"/>
+                <text x="360" y="495" text-anchor="middle" fill="white" font-size="14" font-weight="bold">✅ Denuncia</text>
+                <text x="360" y="515" text-anchor="middle" fill="white" font-size="11">Estado: CERRADA</text>
+            </g>
+            <line x1="360" y1="440" x2="360" y2="470" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)"/>
+            <text x="375" y="455" fill="#2c3e50" font-size="10">Todas las asignaciones cerradas</text>
+            
+            <line x1="280" y1="500" x2="200" y2="500" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)"/>
+            
+            <g>
+                <rect x="50" y="470" width="150" height="60" rx="10" fill="#34495e" stroke="#2c3e50" stroke-width="2" filter="url(#shadow)"/>
+                <text x="125" y="495" text-anchor="middle" fill="white" font-size="14" font-weight="bold">📊 Dashboard</text>
+                <text x="125" y="515" text-anchor="middle" fill="white" font-size="11">Estadísticas</text>
+            </g>
+        </svg>
+    </div>
+    
+    <h3>Descripción del Flujo</h3>
+    <ol>
+        <li><strong>Denunciante</strong> llama o reporta incidente</li>
+        <li><strong>Operador Central</strong> ingresa datos en SGS Denuncias (tipo, prioridad, descripción, ubicación, fotos)</li>
+        <li>Denuncia queda en estado <strong>ACTIVA y SIN DESPACHO</strong></li>
+        <li><strong>Operador</strong> asigna personal en turno a través de SGS Dispatcher</li>
+        <li><strong>Personal de Seguridad</strong> consulta "Mis asignaciones" y ve detalles en mapa</li>
+        <li><strong>Personal</strong> actualiza estados: Recibida → En ruta → En lugar → Cerrada</li>
+        <li>Cuando todas las asignaciones están cerradas, la denuncia pasa a estado <strong>CERRADA</strong></li>
+        <li>Información visible en <strong>SGS Administrador / Dashboard</strong></li>
+    </ol>
+
+    <h2>9. Términos de Pago (actualizado)</h2>
+    <table>
+        <tr>
+            <th>Pago</th>
+            <th>Porcentaje</th>
+            <th>Monto</th>
+            <th>Condición</th>
+        </tr>
+        <tr>
+            <td>Pago 1</td>
+            <td>10%</td>
+            <td>$400.000</td>
+            <td>Aprobación de la propuesta y antes del inicio del desarrollo</td>
+        </tr>
+        <tr>
+            <td>Pago 2</td>
+            <td>30%</td>
+            <td>$1.200.000</td>
+            <td>Aprobación del diseño y alcance</td>
+        </tr>
+        <tr>
+            <td>Pago 3</td>
+            <td>30%</td>
+            <td>$1.200.000</td>
+            <td>Entrega de MVP operativo y demo</td>
+        </tr>
+        <tr>
+            <td>Pago 4</td>
+            <td>30%</td>
+            <td>$1.200.000</td>
+            <td>Entrega final y documentación</td>
+        </tr>
+        <tr style="font-weight: bold; background: #ecf0f1;">
+            <td colspan="2">TOTAL</td>
+            <td>$4.000.000</td>
+            <td>Bruto</td>
+        </tr>
+    </table>
+    <p><em>Nota: El pago 1 inicial cubre costos de infraestructura mínima y herramientas especializadas de soporte técnico (incluyendo plataformas de IA) utilizadas durante el desarrollo.</em></p>
+
+    <div class="page-break"></div>
+
+    <h2>10. Propiedad intelectual y condiciones de uso</h2>
+    <p>El sistema "Seguridad Pública Los Ángeles" (MVP Operacional) ha sido diseñado y desarrollado por <strong>Jonnatan González Reichmann</strong>, Ingeniero en Informática.</p>
+    <p>El cliente obtiene, mediante esta propuesta, el <strong>derecho de uso permanente y no exclusivo de la solución implementada</strong>, únicamente para fines internos de la Municipalidad de Los Ángeles.</p>
+    <p>El <strong>código fuente, la estructura técnica y los componentes reutilizables</strong> son propiedad del desarrollador y <strong>no se incluyen como parte del presente contrato</strong>, salvo acuerdo adicional por escrito.</p>
+    <p>Cualquier entrega de código fuente, copia, modificación posterior o uso por terceros deberá ser <strong>autorizado y cotizado</strong> como un servicio independiente.</p>
+
+    <div class="page-break"></div>
+
+    <h2>11. Infraestructura, dominio y correo electrónico</h2>
+
+    <h3>Dominio</h3>
+    <ul>
+        <li>El cliente será responsable de la <strong>compra y administración del dominio</strong> en <strong>NIC Chile</strong> (por ejemplo: <em>seguridadlosangeles.cl</em>).</li>
+        <li>El dominio se configurará para apuntar al servidor donde se aloje el sistema.</li>
+    </ul>
+
+    <h3>Opciones de Alojamiento</h3>
+    <ul>
+        <li><strong>Opción 1 – Hosting tradicional (.NET)</strong><br>
+            Servicio tipo <em>SmartASP.NET</em>, adecuado para entornos simples que no requieren contenedores Docker.<br>
+            Incluye soporte para aplicaciones .NET, base de datos SQL Server Express y SMTP integrado.
+        </li>
+        <li><strong>Opción 2 – VPS dedicado (recomendado)</strong><br>
+            Servidor virtual privado en plataformas como <em>Vultr</em>, <em>Hetzner</em> o <em>DigitalOcean</em>, con configuración personalizada (API .NET + Frontend Angular + Base de Datos PostgreSQL).<br>
+            Requisitos mínimos: 2 vCPU, 4 GB RAM, 80 GB SSD.<br>
+            Incluye instalación de Docker, certificados SSL y respaldo básico automatizado.
+        </li>
+    </ul>
+    <p>La opción final será definida junto con el cliente antes del despliegue, considerando presupuesto y soporte técnico disponible.</p>
+
+    <h3>Correo electrónico y notificaciones</h3>
+    <ul>
+        <li>El sistema enviará correos automáticos de:
+            <ul>
+                <li>Recuperación de contraseña</li>
+                <li>Asignación de denuncias al personal</li>
+                <li>Cierre de casos o cambios de estado</li>
+            </ul>
+        </li>
+        <li>Para seguridad y confiabilidad, se integrará con un <strong>servicio externo de correo transaccional</strong> (SMTP o API), con autenticación de dominio (SPF/DKIM):</li>
+        <li>Opciones sugeridas:
+            <ul>
+                <li><strong>Brevo (Sendinblue):</strong> gratuito hasta 300 correos diarios.</li>
+                <li><strong>SendGrid:</strong> gratuito hasta 100 correos diarios; planes desde USD 14,95/mes.</li>
+            </ul>
+        </li>
+        <li>Estos servicios permiten alta entregabilidad y evitan bloqueos por spam.</li>
+    </ul>
+
+
+    <div class="footer">
+        <p>Sistema "Seguridad Pública Los Ángeles" - Propuesta MVP</p>
+        <p>Documento preparado para Municipalidad de Los Ángeles</p>
+    </div>
+</body>
+</html>
