@@ -18,6 +18,14 @@
             color: #333;
         }
 
+        body.auth-check {
+            visibility: hidden;
+        }
+
+        body.auth-check.authenticated {
+            visibility: visible;
+        }
+
         /* Sidebar */
         .sidebar {
             position: fixed;
@@ -550,7 +558,7 @@
         }
     </style>
 </head>
-<body>
+<body class="auth-check">
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo">
@@ -558,49 +566,49 @@
             <p>Sistema de Gestión de Seguridad</p>
         </div>
         <div class="menu">
-            <div class="menu-item active" onclick="showScreen('dashboard')">
+            <div class="menu-item active" onclick="showScreen('dashboard', this)">
                 <i class="fas fa-home"></i>
                 <span>Dashboard</span>
             </div>
             
             <div class="menu-section">Denuncias</div>
-            <div class="menu-item" onclick="showScreen('nueva-denuncia')">
+            <div class="menu-item" onclick="showScreen('nueva-denuncia', this)">
                 <i class="fas fa-plus-circle"></i>
                 <span>Nueva Denuncia</span>
             </div>
-            <div class="menu-item" onclick="showScreen('denuncias-activas')">
+            <div class="menu-item" onclick="showScreen('denuncias-activas', this)">
                 <i class="fas fa-exclamation-triangle"></i>
                 <span>Denuncias Activas</span>
             </div>
-            <div class="menu-item" onclick="showScreen('mis-denuncias')">
+            <div class="menu-item" onclick="showScreen('mis-denuncias', this)">
                 <i class="fas fa-user-shield"></i>
                 <span>Mis Denuncias</span>
             </div>
             
             <div class="menu-section">Dispatcher</div>
-            <div class="menu-item" onclick="showScreen('personal-turno')">
+            <div class="menu-item" onclick="showScreen('personal-turno', this)">
                 <i class="fas fa-users"></i>
                 <span>Personal en Turno</span>
             </div>
-            <div class="menu-item" onclick="showScreen('sin-despacho')">
+            <div class="menu-item" onclick="showScreen('sin-despacho', this)">
                 <i class="fas fa-clock"></i>
                 <span>Sin Despacho</span>
             </div>
-            <div class="menu-item" onclick="showScreen('en-ejecucion')">
+            <div class="menu-item" onclick="showScreen('en-ejecucion', this)">
                 <i class="fas fa-running"></i>
                 <span>En Ejecución</span>
             </div>
-            <div class="menu-item" onclick="showScreen('mis-asignaciones')">
+            <div class="menu-item" onclick="showScreen('mis-asignaciones', this)">
                 <i class="fas fa-clipboard-list"></i>
                 <span>Mis Asignaciones</span>
             </div>
             
             <div class="menu-section">Administración</div>
-            <div class="menu-item" onclick="showScreen('usuarios')">
+            <div class="menu-item" onclick="showScreen('usuarios', this)">
                 <i class="fas fa-users-cog"></i>
                 <span>Usuarios</span>
             </div>
-            <div class="menu-item" onclick="showScreen('busqueda')">
+            <div class="menu-item" onclick="showScreen('busqueda', this)">
                 <i class="fas fa-search"></i>
                 <span>Búsqueda</span>
             </div>
@@ -1347,41 +1355,69 @@
     </div>
 
     <script>
-        // Verificar sesión al cargar
-        window.addEventListener('DOMContentLoaded', function() {
-            const userData = sessionStorage.getItem('user');
-            if (userData) {
+        const AUTH_KEYS = Object.freeze({
+            token: 'sgsAuthToken',
+            user: 'sgsUser'
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = sessionStorage.getItem(AUTH_KEYS.token) || localStorage.getItem(AUTH_KEYS.token);
+            if (!token) {
+                redirectToLogin();
+                return;
+            }
+
+            let userData = sessionStorage.getItem(AUTH_KEYS.user);
+            if (!userData) {
+                userData = localStorage.getItem(AUTH_KEYS.user);
+                if (!userData) {
+                    redirectToLogin();
+                    return;
+                }
+                sessionStorage.setItem(AUTH_KEYS.user, userData);
+            }
+
+            sessionStorage.setItem(AUTH_KEYS.token, token);
+
+            try {
                 const user = JSON.parse(userData);
-                document.getElementById('userName').textContent = user.name;
-                document.getElementById('userRole').textContent = user.role;
-                
-                // Obtener iniciales
-                const initials = user.name.split(' ').map(n => n[0]).join('');
-                document.getElementById('userAvatar').textContent = initials;
+                document.getElementById('userName').textContent = user.name || 'Usuario';
+                document.getElementById('userRole').textContent = user.role || '';
+                const initials = (user.name || '').split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase();
+                document.getElementById('userAvatar').textContent = initials || 'SG';
+                document.body.classList.add('authenticated');
+            } catch (error) {
+                console.error('No se pudo leer la sesión de usuario', error);
+                redirectToLogin();
             }
         });
 
         function logout() {
-            sessionStorage.clear();
+            sessionStorage.removeItem(AUTH_KEYS.token);
+            sessionStorage.removeItem(AUTH_KEYS.user);
+            localStorage.removeItem(AUTH_KEYS.token);
+            localStorage.removeItem(AUTH_KEYS.user);
             window.location.href = 'login.html';
         }
 
-        function showScreen(screenId) {
-            // Ocultar todas las pantallas
+        function showScreen(screenId, element) {
             document.querySelectorAll('.screen').forEach(screen => {
                 screen.classList.remove('active');
             });
-            
-            // Mostrar la pantalla seleccionada
-            document.getElementById(screenId).classList.add('active');
-            
-            // Actualizar menú activo
+
+            const targetScreen = document.getElementById(screenId);
+            if (targetScreen) {
+                targetScreen.classList.add('active');
+            }
+
             document.querySelectorAll('.menu-item').forEach(item => {
                 item.classList.remove('active');
             });
-            event.currentTarget.classList.add('active');
-            
-            // Actualizar título
+
+            if (element) {
+                element.classList.add('active');
+            }
+
             const titles = {
                 'dashboard': 'Dashboard Principal',
                 'nueva-denuncia': 'Nueva Denuncia',
@@ -1394,8 +1430,16 @@
                 'usuarios': 'Gestión de Usuarios',
                 'busqueda': 'Búsqueda de Denuncias'
             };
-            
+
             document.getElementById('screen-title').textContent = titles[screenId] || 'SGS Los Ángeles';
+        }
+
+        function redirectToLogin() {
+            sessionStorage.removeItem(AUTH_KEYS.token);
+            sessionStorage.removeItem(AUTH_KEYS.user);
+            localStorage.removeItem(AUTH_KEYS.token);
+            localStorage.removeItem(AUTH_KEYS.user);
+            window.location.href = 'login.html';
         }
     </script>
 </body>

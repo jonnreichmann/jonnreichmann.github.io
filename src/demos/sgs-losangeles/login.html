@@ -339,8 +339,28 @@
             margin: 5px 0;
         }
 
-        .demo-credentials strong {
-            color: #2c3e50;
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.error {
+            background: #fdecea;
+            color: #b0413e;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .feedback.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #27ae60;
         }
 
         /* Responsive */
@@ -488,59 +508,147 @@
                     <div class="loading"></div>
                 </button>
 
+                <div id="loginFeedback" class="feedback" aria-live="polite"></div>
+
                 <div class="demo-credentials">
                     <h4>
-                        <i class="fas fa-info-circle"></i>
-                        Credenciales de Prueba
+                        <i class="fas fa-shield-check"></i>
+                        Acceso Restringido
                     </h4>
-                    <p><strong>Operador:</strong> operador@losangeles.cl</p>
-                    <p><strong>Admin:</strong> admin@losangeles.cl</p>
-                    <p><strong>Personal:</strong> personal@losangeles.cl</p>
-                    <p style="margin-top: 10px; font-style: italic;">Contraseña: cualquiera (es un prototipo)</p>
+                    <p>Este entorno de demostración es privado y requiere credenciales autorizadas.</p>
+                    <p>Comparta el enlace únicamente con personas que cuenten con el acceso entregado por el equipo del proyecto.</p>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        function handleLogin(event) {
-            event.preventDefault();
-            
-            const btn = document.getElementById('loginBtn');
-            const email = document.getElementById('email').value;
-            
-            // Agregar clase loading
-            btn.classList.add('loading');
-            btn.disabled = true;
-            
-            // Simular delay de autenticación
-            setTimeout(() => {
-                // Guardar usuario en sessionStorage
-                const userData = {
-                    email: email,
-                    name: getUserName(email),
-                    role: getUserRole(email)
-                };
-                sessionStorage.setItem('user', JSON.stringify(userData));
-                
-                // Redireccionar al dashboard
+        const AUTH_KEYS = Object.freeze({
+            token: 'sgsAuthToken',
+            user: 'sgsUser'
+        });
+
+        const AUTH_CONFIG = (() => {
+            const encoded = 'eyJlbWFpbEhhc2giOiIwMDliMjUwMDQxZDk2NzU2ZTI5NDRlZmIwMDYwNDQ4ZDFkMjBiMjk5YmU0NjVmYTEwYjg3M2RjMjYyYzhkNjg2IiwicGFzc3dvcmRIYXNoIjoiMWY3NTE5ZDZkMmRkMTYwMmI1ZDg5Nzk2OTc4Yjg0ZjljYTIyOTQ0NjYzNzVmMGM1NWYxZjFhYzA5NjM2YzdmNCJ9';
+            try {
+                return JSON.parse(atob(encoded));
+            } catch (error) {
+                console.error('No se pudo cargar la configuración de autenticación.', error);
+                return {};
+            }
+        })();
+
+        const USER_PROFILE = Object.freeze({
+            name: 'Operador de Seguridad',
+            role: 'Operador Central'
+        });
+
+        const encoder = new TextEncoder();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            enforceSession();
+
+            const remember = document.getElementById('remember');
+            const storedEmail = localStorage.getItem('sgsRememberedEmail');
+            if (storedEmail) {
+                document.getElementById('email').value = storedEmail;
+                remember.checked = true;
+            }
+        });
+
+        function enforceSession() {
+            const token = sessionStorage.getItem(AUTH_KEYS.token) || localStorage.getItem(AUTH_KEYS.token);
+            const user = sessionStorage.getItem(AUTH_KEYS.user) || localStorage.getItem(AUTH_KEYS.user);
+
+            if (token && user) {
+                // Sincronizar sesión y enviar al dashboard
+                sessionStorage.setItem(AUTH_KEYS.token, token);
+                sessionStorage.setItem(AUTH_KEYS.user, user);
                 window.location.href = 'dashboard.html';
-            }, 1500);
-        }
-        
-        function getUserName(email) {
-            if (email.includes('admin')) return 'María González';
-            if (email.includes('personal')) return 'Carlos Rojas';
-            return 'Juan Pérez';
-        }
-        
-        function getUserRole(email) {
-            if (email.includes('admin')) return 'Administrador';
-            if (email.includes('personal')) return 'Personal de Terreno';
-            return 'Operador Central';
+            }
         }
 
-        // Efecto de escritura en el placeholder
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const btn = document.getElementById('loginBtn');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const rememberInput = document.getElementById('remember');
+            const feedback = document.getElementById('loginFeedback');
+
+            feedback.className = 'feedback';
+            feedback.textContent = '';
+
+            btn.classList.add('loading');
+            btn.disabled = true;
+
+            try {
+                const email = emailInput.value.trim().toLowerCase();
+                const password = passwordInput.value;
+
+                if (!AUTH_CONFIG.emailHash || !AUTH_CONFIG.passwordHash) {
+                    throw new Error('Configuración de acceso no disponible. Contacte al administrador.');
+                }
+
+                const [emailHash, passwordHash] = await Promise.all([
+                    digestValue(email),
+                    digestValue(password)
+                ]);
+
+                if (emailHash !== AUTH_CONFIG.emailHash || passwordHash !== AUTH_CONFIG.passwordHash) {
+                    throw new Error('Credenciales inválidas. Verifique el correo y la contraseña.');
+                }
+
+                const token = generateToken();
+                const userData = JSON.stringify({
+                    email,
+                    name: USER_PROFILE.name,
+                    role: USER_PROFILE.role,
+                    authenticatedAt: new Date().toISOString()
+                });
+
+                sessionStorage.setItem(AUTH_KEYS.token, token);
+                sessionStorage.setItem(AUTH_KEYS.user, userData);
+
+                if (rememberInput.checked) {
+                    localStorage.setItem(AUTH_KEYS.token, token);
+                    localStorage.setItem(AUTH_KEYS.user, userData);
+                    localStorage.setItem('sgsRememberedEmail', email);
+                } else {
+                    localStorage.removeItem(AUTH_KEYS.token);
+                    localStorage.removeItem(AUTH_KEYS.user);
+                    localStorage.removeItem('sgsRememberedEmail');
+                }
+
+                feedback.textContent = 'Acceso concedido. Redirigiendo…';
+                feedback.classList.add('success', 'show');
+
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 600);
+            } catch (error) {
+                feedback.textContent = error.message || 'Ocurrió un problema al iniciar sesión.';
+                feedback.classList.add('error', 'show');
+            } finally {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+            }
+        }
+
+        async function digestValue(value) {
+            const buffer = await crypto.subtle.digest('SHA-256', encoder.encode(value));
+            return Array.from(new Uint8Array(buffer))
+                .map(byte => byte.toString(16).padStart(2, '0'))
+                .join('');
+        }
+
+        function generateToken() {
+            const bytes = new Uint8Array(16);
+            crypto.getRandomValues(bytes);
+            return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+        }
+
         const emailInput = document.getElementById('email');
         emailInput.addEventListener('focus', function() {
             this.style.borderColor = '#3498db';
